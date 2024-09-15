@@ -64,6 +64,38 @@
 }
 \AtEveryBibitem{\iffieldundef{doi}{}{\clearfield{url}}}
 
+
+% Custom driver for @article (title in medium bold, with hyperlink if URL exists, then year, then note)
+\DeclareBibliographyDriver{article}{%
+    \iffieldundef{url}{%
+        \printfield{title} % Print the title as normal
+    }{%
+        \href{\thefield{url}}{\printfield{title}} % If URL exists, make the title a link
+    }%
+    \newunit
+    \printfield{year} % Print the year
+    \newunit
+    \printfield{note} % Print the description/note
+    \usebibmacro{finentry} % End entry
+}
+
+% Custom driver for @inproceedings (title in medium bold, with hyperlink if URL exists, then year, then note)
+\DeclareBibliographyDriver{inproceedings}{%
+    \iffieldundef{url}{%
+        \printfield{title} % Print the title as normal
+    }{%
+        \href{\thefield{url}}{\printfield{title}} % If URL exists, make the title a link
+    }%
+    \newunit
+    \printfield{year} % Print the year
+    \newunit
+    \printfield{note} % Print the description/note
+    \usebibmacro{finentry} % End entry
+}
+
+% Bolden the title for both @article and @inproceedings with medium bold
+\DeclareFieldFormat[article, inproceedings]{title}{\textmd{\textbf{#1}}}
+
 % \renewcommand{\bibfont}{\small}
 \setlength{\bibitemsep}{1.5ex}
 \setlength{\bibhang}{2.5em}
