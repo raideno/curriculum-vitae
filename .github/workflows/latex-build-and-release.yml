@@ -2,8 +2,8 @@ name: Build and Release LaTeX PDF of CV
 
 on:
   push:
-    branches:
-      - main # This triggers the workflow only for the main branch push
+    tags:
+      - "v*" # This triggers the workflow only for tags starting with "v"
 
 permissions:
   contents: write # Allow the action to create a release
