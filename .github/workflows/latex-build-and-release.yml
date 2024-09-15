@@ -60,7 +60,6 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { context } = require('@actions/github');
             const { execSync } = require('child_process');
 
             const commits = execSync('git log -1 --pretty=format:"%s"').toString().trim();
