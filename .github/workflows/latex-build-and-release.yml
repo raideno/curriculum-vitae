@@ -1,74 +1,70 @@
 name: Build and Release LaTeX PDF of CV
 
+# NOTE: This triggers the workflow only for tags starting with "v"
+
 on:
   push:
     tags:
-      - "v*" # This triggers the workflow only for tags starting with "v"
+      - "v*"
 
 permissions:
-  contents: write # Allow the action to create a release
+  contents: write
 
 jobs:
   build:
-    name: Compile to PDF and Upload as Artifact
+    name: compile-and-upload-as-artifact
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up LaTeX
-      - name: Set up LaTeX
+      - name: Copy LaTeX source files
+        run: |
+          cp index.tex cv-with-motivations.tex
+          cp index.tex cv-without-motivations.tex
+
+      - name: Comment out motivations rubric
+        run: |
+          sed -i 's/\\makerubric{motivations}/%\\makerubric{motivations}/' cv-without-motivations.tex
+          cp index.tex index_without_motivations.tex
+
+      - name: Build Latex Documents
         uses: xu-cheng/latex-action@3.2.0
         with:
-          root_file: index.tex
-          latexmk_use_xelatex:
-            true # Specify xelatex as the LaTeX engine
+          root_file: |
+            cv-with-motivations.tex
+            cv-without-motivations.tex
+          latexmk_use_xelatex: true
 
-
-            # Step 3: Rename the compiled PDF
-      - name: Rename PDF
-        run: mv index.pdf cv.pdf
-
-      # Step 3: Upload compiled PDF as an artifact
-      - name: Upload PDF as artifact
+      - name: Upload CV PDFs as artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: cv_pdf
-          path: cv.pdf
+          name: cvs
+          path: |
+            cv-with-motivations.pdf
+            cv-without-motivations.pdf
 
   release:
-    name: Create GitHub release with CV PDF
+    name: Create GitHub release with CVs PDF
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Download compiled PDF from previous job
-      - name: Download PDF
+      - name: Download CV PDF
         uses: actions/download-artifact@v3
         with:
-          name: cv_pdf
-
-      # Step 3: Create GitHub release
-      - name: Generate Release Notes
-        id: release_notes
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { execSync } = require('child_process');
-
-            const commits = execSync('git log -1 --pretty=format:"%s"').toString().trim();
-            return `This release contains the latest compiled version of the CV.\n\n- ${commits}`;
+          name: cvs
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: cv.pdf
-          body: ${{ steps.release_notes.outputs.result }}
+          files: |
+            cv-with-motivations.pdf
+            cv-without-motivations.pdf
+          body: This release contains the latest compiled versions of the CV.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
