@@ -1,40 +1,21 @@
-% This CV example/template is based on my own
-% CV which I (lamely attempted) to clean up, so that
-% it's less of an eyesore and easier for others to use.
-%
-% LianTze Lim (liantze@gmail.com)
-% 23 Oct, 2022
-% 24 Aug, 2024 -- Updated X (Twitter) icon
 \documentclass[a4paper,skipsamekey,11pt,english]{curve}
 
-% Uncomment to enable Chinese; needs XeLaTeX
-% \usepackage{ctex}
-
+\usepackage{ifthen}
 
 % Default biblatex style used for the publication list is APA6. If you wish to use a different style or pass other options to biblatex you can change them here. 
 \PassOptionsToPackage{style=ieee,sorting=ydnt,uniquename=init,defernumbers=true}{biblatex}
 
-% Most commands and style definitions are in settings.sty.
+% NOTE: styles and definitions in "settings.sty"
 \usepackage{settings}
 
 % If you need to further customise your biblatex setup e.g. with \DeclareFieldFormat etc please add them here AFTER loading settings.sty. For example, to remove the default "[Online] Available:" prefix before URLs when using the IEEE style:
 \DefineBibliographyStrings{english}{url={\textsc{url}}}
 
-%% Only needed if you want a Publication List
+% TODO: need to be changed depending on the language
+% NOTE: used for the "publications list"
 \addbibresource{own-bib.bib}
 
-%% Specify your last name(s) and first name(s) (as given in the .bib) to automatically bold your own name in the publications list. 
-%% One caveat: You need to write \bibnamedelima where there's a space in your name for this to work properly; or write \bibnamedelimi if you use initials in the .bib
-% \mynames{Lim/Lian\bibnamedelima Tze}
-
-%% You can specify multiple names like this, especially if you have changed your name or if you need to highlight multiple authors. See items 6–9 in the example "Journal Articles" output.
-\mynames{Lim/Lian\bibnamedelima Tze,
-  Wong/Lian\bibnamedelima Tze,
-  Lim/Tracy,
-  Lim/L.\bibnamedelimi T.}
-%% MAKE SURE THERE IS NO SPACE AFTER THE FINAL NAME IN YOUR \mynames LIST
-
-% Change the fonts if you want
+% NOTE: fonts can be changed
 \ifxetexorluatex % If you're using XeLaTeX or LuaLaTeX
   \usepackage{fontspec} 
   %% You can use \setmainfont etc; I'm just using these font packages here because they provide OpenType fonts for use by XeLaTeX/LuaLaTeX anyway
@@ -48,24 +29,32 @@
   \usepackage[varqu,varl,scale=0.9]{zi4}
 \fi
 
-% Change the page margins if you want
+% NOTE: page margins can be changed
 \geometry{left=1cm,right=1cm,top=1.5cm,bottom=1.5cm}
 
-% Change the colours if you want
+% NOTE: colors cna be changed
 \definecolor{SwishLineColour}{HTML}{FF9A51}
 \definecolor{MarkerColour}{HTML}{FF6B00}
 
-% Change the item prefix marker if you want
+% NOTE: item prefix marker can be changed
 % \prefixmarker{$\diamond$}
 
-%% Photo is only shown if "fullonly" is included
+%% NOTE: photo is only shown if "fullonly" is included
 \includecomment{fullonly}
 % \excludecomment{fullonly}
 
+% NOTE: to store the desired language for the cv. default: english
+\newcommand{\cvlanguage}{english}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\input{header}
+\ifthenelse{\equal{\cvlanguage}{english}}{
+  \input{languages/english/1-header.en}
+}{}
+
+\ifthenelse{\equal{\cvlanguage}{french}}{
+  \input{languages/french/1-header.fr}
+}{}
 
 \title{Curriculum Vitae}
 
@@ -73,19 +62,12 @@
 
 \makeheaders[c]
 
-\makerubric{employment}
+\ifthenelse{\equal{\cvlanguage}{english}}{
+  \input{languages/english/index}
+}{}
 
-% If you're not a researcher nor an academic, you probably don't have any publications; delete this line.
-%% Sometimes when a section can't be nicely modelled with the \entry[]... mechanism; hack our own and use \input NOT \makerubric
-\input{publications}
-
-\makerubric{education}
-
-% create a rubric on "knowledges" are add it as a subsection to the "skills" section. This section will include all the courses and things learned during this year. 
-
-\makerubric{skills}
-\makerubric{misc}
-
-\makerubric{motivations}
+\ifthenelse{\equal{\cvlanguage}{french}}{
+  \input{languages/french/index}
+}{}
 
 \end{document}
