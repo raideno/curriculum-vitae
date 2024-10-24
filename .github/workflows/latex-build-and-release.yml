@@ -35,6 +35,11 @@ jobs:
             index.fr.tex
           latexmk_use_xelatex: true
 
+      - name: Rename CVs Files
+        run: |
+          mv index.en.pdf cv.en.pdf
+          mv index.fr.pdf cv.fr.pdf
+
       - name: Upload CV PDFs as artifacts
         uses: actions/upload-artifact@v3
         with:
