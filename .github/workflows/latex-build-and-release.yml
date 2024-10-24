@@ -1,7 +1,5 @@
 name: Build and Release LaTeX PDF of CV
 
-# NOTE: This triggers the workflow only for tags starting with "v"
-
 on:
   push:
     tags:
@@ -19,22 +17,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Copy LaTeX source files
-        run: |
-          cp index.tex cv-with-motivations.tex
-          cp index.tex cv-without-motivations.tex
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
 
-      - name: Comment out motivations rubric
+      - name: Generate Languages Latex Version
         run: |
-          sed -i 's/\\makerubric{motivations}/%\\makerubric{motivations}/' cv-without-motivations.tex
-          cp index.tex index_without_motivations.tex
+          python language-pre-processor.py --language english --file index.tex --output-file-name index.en.tex
+          python language-pre-processor.py --language french --file index.tex --output-file-name index.fr.tex
 
       - name: Build Latex Documents
         uses: xu-cheng/latex-action@3.2.0
         with:
           root_file: |
-            cv-with-motivations.tex
-            cv-without-motivations.tex
+            index.en.tex
+            index.fr.tex
           latexmk_use_xelatex: true
 
       - name: Upload CV PDFs as artifacts
@@ -42,8 +40,8 @@ jobs:
         with:
           name: cvs
           path: |
-            cv-with-motivations.pdf
-            cv-without-motivations.pdf
+            cv.en.pdf
+            cv.fr.pdf
 
   release:
     name: Create GitHub release with CVs PDF
@@ -63,8 +61,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            cv-with-motivations.pdf
-            cv-without-motivations.pdf
+            cv.en.pdf
+            cv.fr.pdf
           body: This release contains the latest compiled versions of the CV.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
