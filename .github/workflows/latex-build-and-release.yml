@@ -24,8 +24,8 @@ jobs:
 
       - name: Generate Languages Latex Version
         run: |
-          python language-pre-processor.py --language english --file index.tex --output-file-name index.en.tex
-          python language-pre-processor.py --language french --file index.tex --output-file-name index.fr.tex
+          python language-pre-processor.py --language english --file index --output-file-name index.en.tex
+          python language-pre-processor.py --language french --file index --output-file-name index.fr.tex
 
       - name: Build Latex Documents
         uses: xu-cheng/latex-action@3.2.0

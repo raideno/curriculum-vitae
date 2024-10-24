@@ -18,7 +18,8 @@ def main() -> int:
     arguments = parser.parse_args(sys.argv[1:])
     
     output_file_content = \
-    f"""\\def\\cvlanguage{{{arguments.language}}}
+    f"""\\documentclass[a4paper,skipsamekey,11pt,{{{arguments.language}}}]{{curve}}
+\\def\\cvlanguage{{{arguments.language}}}
 \\input{{{arguments.file}}}
     """
 
