@@ -18,8 +18,9 @@ def main() -> int:
     arguments = parser.parse_args(sys.argv[1:])
     
     output_file_content = \
-    f"""\\def\\cvlanguage{arguments.language}
-\\input{arguments.file}"""
+    f"""\\def\\cvlanguage{{{arguments.language}}}
+\\input{{{arguments.file}}}
+    """
 
     with open(arguments.output_file_name, 'w') as output_file:
         output_file.write(output_file_content)
